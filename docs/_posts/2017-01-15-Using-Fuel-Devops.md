@@ -17,7 +17,9 @@ In our example we'll be using release 8.0 (Liberty.)
 We can make things easier by creating a file to source, so that we don't have to remember which values
 to export for envrionment variables.
 
-```bash
+Contents of `8-0.sh`
+
+```
 # Start out by exporting the env name. This needs to be different than the env name used for other environments.
 export ENV_NAME=F8
 
