@@ -19,18 +19,21 @@ to export for envrionment variables.
 
 Contents of `8-0.sh`
 
-```
-# Start out by exporting the env name. This needs to be different than the env name used for other environments.
+```bash
+# Start out by exporting the env name. This needs to be different than the 
+# env name used for other environments.
 export ENV_NAME=F8
 
 # Path to the ISO
 export ISO_PATH=/home/USER_NAME/working_dir/ISO/MirantisOpenStack-8.0.iso
 
-# Node count will be the Slave Nodes  + 1(Fuel Master.) Using 6 will give us 1 Fuel Master + 3 Controller Nodes + 2 Computes. 
+# Node count will be the Slave Nodes  + 1(Fuel Master.) Using 6 will give us 
+# 1 Fuel Master + 3 Controller Nodes + 2 Computes. 
 export NODES_COUNT=6
 
 # The VENV_PATH is located where you originally setup the Virtual Environment
 export VENV_PATH=/home/USER_NAME/working_dir/fuel-devops-venv
 
-# There are more variables we can modify using ENV variables. The values can be found in fuelweb_test/settings.py. 
+# There are more variables we can modify using ENV variables. The values can 
+# be found in fuelweb_test/settings.py. 
 ```
