@@ -1,5 +1,3 @@
-name: mPetason - Blog
 theme: jekyll-theme-minimal
-webrick:
-  headers:
-    My-Header: mPetason - Blog
+title: 'mPetason - Blog'
+
