@@ -51,4 +51,29 @@ use this tool we will need to activate the virtual environment.
 
 ```bash
 dos.py list
+NAME
+------
+F8
 ```
+
+`Dos.py` can be used to gather information about our nodes, such as the network ranges we'll need
+to configure in Fuel.
+
+```bash
+dos.py net-list F8
+NETWORK NAME    IP NET
+--------------  -------------
+private         10.109.4.0/24
+public          10.109.3.0/24
+storage         10.109.2.0/24
+management      10.109.1.0/24
+admin           10.109.0.0/24
+```
+
+After the deployment has finished, our fuel master and slave nodes will be shut off. We can start them back up by
+using: 
+
+`dos.py start F8`
+
+Once they have started we should be able to get to the Fuel Master (the IP should be returned after running the system_tests.sh
+when we were building our lab). In my case it's 10.109.0.2. 
