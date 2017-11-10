@@ -5,9 +5,9 @@ Kubernetes makes it easy to deploy containerized applications in the cloud. In o
 
 ### Secrets
 
-Separate from the deployment itself we are configuring secrets for the Twitch API token and clientID. The secrets are referenced in the application deployment.
+We setup secrets before the deployment so that we can store sensitive information in Kubernetes that can later be referenced by a variable. In our case we will need a token and clientID to authenticate against the Twitch API. 
 
-```bash
+``bash
 ---
 apiVersion: v1
 kind: Secret
@@ -18,15 +18,15 @@ data:
   token: YOUR_OAUTH_TOKEN_IN_BASE64
   clientID: YOUR_CLIENT_ID_IN_BASE64
 ---
-```
+``
 
 ### Application Pod
 
 The application pod consists of a single container running our Node.js app. The application polls the Twitch API for Player Unknown Battlegrounds streams. We record part of the stream and pull out a screenshot that can be sent to the OCR pod for processing.
 
-The image is built without any sensitive information built in. We are using Kubernetes secrets to store the values needed to authenticate with the Twitch api. In the example below we reference the secret twitch-auth and pull the token needed to authenticate. We also store the clientID, which is required with newer versions of the Twitch API.
+Since we are using secrets, the images are built without sensitive information. In the example below we reference the secret twitch-auth and pull the token needed to authenticate. We also store the clientID, which is required with newer versions of the Twitch API.
 
-```bash
+``bash
 ---
        - name: token
             valueFrom:
@@ -39,22 +39,22 @@ The image is built without any sensitive information built in. We are using Kube
                 name: twitch-auth
                 key: clientID
 ---
-```
+``
 
 To simplify deployment we are using environment variables for a few values. APP_HOSTNAME is used throughout the deployment to specify the URL for the application. In our production environment the value is set to rotisserie.tv. Since the OCR_HOST is running behind the same URL we set the value to equal the hostname.
 
-```bash
+``bash
 ---
           - name: OCR_HOST
             value: $APP_HOSTNAME
           ports:
             - containerPort: 3000
 ---
-```
+``
 
 We setup a ClusterIP service for the pod since we aren't worried about getting to it from the outside. A Load Balancer is configured to allow traffic in from the internet. More information is provided on the Load Balancer in the Kube-Lego section.
 
-```bash
+``bash
 ---
 apiVersion: v1
 kind: Service
@@ -68,7 +68,7 @@ spec:
   selector:
     app: rotisserie-app
 ---
-```
+``
 
 ### OCR Pod
 
@@ -76,7 +76,7 @@ The ocr pod has a single container running an optical character recognition serv
 
 The deployment is basic. We're pulling the OCR image and setting the port to 3001, which we'll use later when we setup our Ingress resources.
 
-```bash
+``bash
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -94,11 +94,11 @@ spec:
           ports:
             - containerPort: 3001
 ---
-```
+``
 
 We are using a ClusterIP for the OCR container. External traffic is managed by the Load Balancer that we setup in Kube-Lego.
 
-```bash
+``bash
 ---
 apiVersion: v1
 kind: Service
@@ -112,11 +112,14 @@ spec:
   selector:
     app: rotisserie-ocr
 ---
-```
+``
 
 ### Static Pod
 
-```bash
+The static pod consists of a single container with Nginx and the static data used for the site. We create an image based on nginx alpine and then copy the static data over from the public folder in our repository. The deployment sets the pod up to listen on port 8082 and sets Nginx environment variables to configure the Nginx service.
+
+
+``bash
 ---
 apiVersion: v1
 kind: Service
@@ -151,13 +154,9 @@ spec:
         ports:
         - containerPort: 8082
 ---
-```
+``
 
 
 Kube-Lego
 
-With Kube-Lego we can generate a certificate, as well as renew it, in an automated way.
-
-
-
-
+With Kube-Lego we can generate a certificate, as well as renew it, in an automated way.`
