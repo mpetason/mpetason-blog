@@ -1,13 +1,30 @@
-### Node.js Application running in Kubernetes with Kube-Lego
+# Node.js Application running in Kubernetes with Kube-Lego
 
 Kubernetes makes it easy to deploy containerized applications in the cloud. In our use case we created an application that would require three containers, each running in their own pod. The deployment is split up into an application pod, ocr pod, and a static pod. On top of the base deployment we have setup Kube-Lego to manage TLS certificates.
 
 
+## Secrets
+
+Separate from the deployment itself we are configuring secrets for the Twitch API token and clientID. The secrets are referenced in the application deployment.
+
+```bash
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: twitch-auth
+type: Opaque
+data:
+  token: YOUR_OAUTH_TOKEN_IN_BASE64
+  clientID: YOUR_CLIENT_ID_IN_BASE64
+---
+```
+
 ## Application Pod
 
-The application pod consists of a single container running our Node.js app. The application polls the Twitch API for Player Unknown Battlegrounds streams. We record part of the stream and pull out a screenshot that can be sent to the OCR pod for processing. 
+The application pod consists of a single container running our Node.js app. The application polls the Twitch API for Player Unknown Battlegrounds streams. We record part of the stream and pull out a screenshot that can be sent to the OCR pod for processing.
 
-The image is built without any sensitive information built in. We are using Kubernetes secrets to store the values needed to authenticate with the Twitch api. In the example below we reference the secret twitch-auth and pull the token needed to authenticate. We also store the clientID, which is required with newer versions of the Twitch API. 
+The image is built without any sensitive information built in. We are using Kubernetes secrets to store the values needed to authenticate with the Twitch api. In the example below we reference the secret twitch-auth and pull the token needed to authenticate. We also store the clientID, which is required with newer versions of the Twitch API.
 
 ```bash
 ---
@@ -24,7 +41,7 @@ The image is built without any sensitive information built in. We are using Kube
 ---
 ```
 
-To simplify deployment we are using environment variables for a few values. APP_HOSTNAME is used throughout the deployment to specify the URL for the application. In our production environment the value is set to rotisserie.tv. Since the OCR_HOST is running behind the same URL we set the value to equal the hostname. 
+To simplify deployment we are using environment variables for a few values. APP_HOSTNAME is used throughout the deployment to specify the URL for the application. In our production environment the value is set to rotisserie.tv. Since the OCR_HOST is running behind the same URL we set the value to equal the hostname.
 
 ```bash
 ---
@@ -35,7 +52,7 @@ To simplify deployment we are using environment variables for a few values. APP_
 ---
 ```
 
-We setup a ClusterIP service for the pod since we aren't worried about getting to it from the outside. A Load Balancer is configured to allow traffic in from the internet. More information is provided on the Load Balancer in the Kube-Lego section. 
+We setup a ClusterIP service for the pod since we aren't worried about getting to it from the outside. A Load Balancer is configured to allow traffic in from the internet. More information is provided on the Load Balancer in the Kube-Lego section.
 
 ```bash
 ---
@@ -55,7 +72,7 @@ spec:
 
 ## OCR Pod
 
-The ocr pod has a single container running an optical character recognition service. Images from the stream are sent over to the OCR service where they are processed. We are looking for the amount of players alive, which is denoted by a number in the top right of the stream. OCR provides the amount of players alive back to the application container where they are processed again to find the person with the lowest count. 
+The ocr pod has a single container running an optical character recognition service. Images from the stream are sent over to the OCR service where they are processed. We are looking for the amount of players alive, which is denoted by a number in the top right of the stream. OCR provides the amount of players alive back to the application container where they are processed again to find the person with the lowest count.
 
 The deployment is basic. We're pulling the OCR image and setting the port to 3001, which we'll use later when we setup our Ingress resources.
 
@@ -79,7 +96,7 @@ spec:
 ---
 ```
 
-We are using a ClusterIP for the OCR container. External traffic is managed by the Load Balancer that we setup in Kube-Lego. 
+We are using a ClusterIP for the OCR container. External traffic is managed by the Load Balancer that we setup in Kube-Lego.
 
 ```bash
 ---
@@ -137,28 +154,9 @@ spec:
 ```
 
 
-## Secrets
-
-Separate from the deployment itself we are configuring secrets for the Twitch API token and clientID. The secrets are referenced in the application deployment. 
-
-```bash
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: twitch-auth
-type: Opaque
-data:
-  token: YOUR_OAUTH_TOKEN_IN_BASE64
-  clientID: YOUR_CLIENT_ID_IN_BASE64
----
-```
-
 Kube-Lego
 
-With Kube-Lego we can generate a certificate, as well as renew it, in an automated way. 
-
-
+With Kube-Lego we can generate a certificate, as well as renew it, in an automated way.
 
 
 
