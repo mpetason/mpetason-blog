@@ -121,7 +121,7 @@ spec:
 
 ### Kube-Lego
 
-With Kube-Lego we can generate a certificate, as well as renew it, in an automated way. The first thing we have to configure is the configmap, which will setup the letsencrypt URL and email associated with the certificate. 
+With Kube-Lego we can generate a certificate, as well as renew it, in an automated way. The first thing we have to configure is the configmap, which will setup the letsencrypt URL and email associated with the certificate.
 
 
 ```bash
@@ -134,7 +134,7 @@ data:
 kind: ConfigMap
 ```
 
-The deployment references the configmap values and sets them to LEGO_EMAIL and LEGO_URL. 
+The deployment references the configmap values and sets them to LEGO_EMAIL and LEGO_URL.
 
 ```bash
 apiVersion: extensions/v1beta1
@@ -171,8 +171,7 @@ spec:
               fieldPath: status.podIP
 ```
 
-The Kube-Lego deployment will also configure an ingress resource and manage it. The values configured in this ingress resource are hard coded. At this time there is not an option to configure custom annotations. SSL-Redirect is configured as false in this resource so that letsencrypt can challenge on port 80:/.well-known/acme-challenge. 
-
+The Kube-Lego deployment will also configure an ingress resource and manage it. The values configured in this ingress resource are hard coded. At this time there is not an option to configure custom annotations. SSL-Redirect is configured as false in this resource so that letsencrypt can challenge on port 80:/.well-known/acme-challenge.
 
 ```bash
 apiVersion: extensions/v1beta1
@@ -183,7 +182,7 @@ metadata:
     ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0
     kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme-challenge-endpoints: "true"
-  creationTimestamp: 
+  creationTimestamp:
   generation: 5
   name: kube-lego-nginx
   namespace: default
@@ -202,10 +201,10 @@ spec:
 status:
   loadBalancer:
     ingress:
-    - ip: 
+    - ip:
 ```
 
-A load balancer service is configured to provide a public IP address. The service will listen on 80 and 443, so we can accept challenge requests from letsencrypt on 80 and then serve the site on 443. In the ingress resource we force SSL redirects when the path matches /, /current, /all. Once the Load Balancer service has been setup we pull the IP address and then configure an A record for our domain so that it points at the IP. 
+A load balancer service is configured to provide a public IP address. The service will listen on 80 and 443, so we can accept challenge requests from letsencrypt on 80 and then serve the site on 443. In the ingress resource we force SSL redirects when the path matches /, /current, /all. Once the Load Balancer service has been setup we pull the IP address and then configure an A record for our domain so that it points at the IP.
 
 ```bash
 apiVersion: v1
@@ -224,8 +223,7 @@ spec:
     app: nginx
 ```
 
-Kube-Lego supports the Nginx Ingress Controller and GCE. The Nginx default deployment is used in our cluster. When ingress resources are configured the Nginx Ingress Controller will configure the Nginx pod by editing the Nginx.conf file and then it will reload the service. The ingress controller needs a default backend so we use a basic backend service that can be hit when the domain is not valid. Hitting the LB IP directly will result in - default backend - 404, since we are only configuring ingress to handle Rotisserie.tv (or the APP_DOMAIN value.) 
-
+Kube-Lego supports the Nginx Ingress Controller and GCE. The Nginx default deployment is used in our cluster. When ingress resources are configured the Nginx Ingress Controller will configure the Nginx pod by editing the Nginx.conf file and then it will reload the service. The ingress controller needs a default backend so we use a basic backend service that can be hit when the domain is not valid. Hitting the LB IP directly will result in - default backend - 404, since we are only configuring ingress to handle Rotisserie.tv (or the APP_DOMAIN value.)
 
 ```bash
 apiVersion: extensions/v1beta1
@@ -267,10 +265,11 @@ spec:
         - /nginx-ingress-controller
         - --default-backend-service=default/default-http-backend
         - --nginx-configmap=default/nginx
+```
 
-The rotisserie-ingress resource allows us to specify different annotations. In our case we want to redirect http traffic to https. This is where we also configure the different backends. The values are used by the Nginx pod to configure the Nginx.conf. When the values are updated you can view changes to the configuration as well as a reload in the pod by watching the logs. 
+The rotisserie-ingress resource allows us to specify different annotations. In our case we want to redirect http traffic to https. This is where we also configure the different backends. The values are used by the Nginx pod to configure the Nginx.conf. When the values are updated you can view changes to the configuration as well as a reload in the pod by watching the logs.
 
----
+```bash
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -300,8 +299,7 @@ spec:
         backend:
           serviceName: rotisserie-app
           servicePort: 3000
+```
 
 ## Conclusion
 
-
-`
