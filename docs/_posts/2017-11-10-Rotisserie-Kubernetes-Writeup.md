@@ -190,8 +190,9 @@ spec:
     app: nginx
 ```
 
-Kube-Lego supports the Nginx Ingress Controller and GCE. Nginx is used in this deployment. When ingress resources are configured the Nginx Ingress Controller will configure the Nginx pod by editing the Nginx.conf file and then it will reload the service. The ingress controller needs a default backend so we use a basic backend service that can be hit when the domain is not valid. Hitting the LB IP directly will result in - default backend - 404, since we are only configuring ingress to handle Rotisserie.tv (or the APP_DOMAIN value.) 
+Kube-Lego supports the Nginx Ingress Controller and GCE. Nginx is used in this deployment. When ingress resources are configured the Nginx Ingress Controller will configure the Nginx pod by editing the Nginx.conf file and then it will reload the service. The ingress controller needs a default backend so we use a basic backend service that can be hit when the domain is not valid. Hitting the LB IP directly will result in - default backend - 404, since we are only configuring ingress to handle Rotisserie.tv (or the APP_DOMAIN value.)
 
+```bash
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -231,9 +232,9 @@ spec:
         - /nginx-ingress-controller
         - --default-backend-service=default/default-http-backend
         - --nginx-configmap=default/nginx
+```
 
-
-
+```bash
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -350,3 +351,4 @@ metadata:
   namespace: default
   name: nginx
 `
+```
