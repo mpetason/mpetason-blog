@@ -301,5 +301,50 @@ spec:
           servicePort: 3000
 ```
 
+## Deploy
+
+The deployment process is simplified by using a Makefile. It is easier to track development changes by tagging based on revision. By default we are using docker hub to host images. Using a docker_username variable makes it easier for other to deploy the application as well.
+
+Normally when we deploy we are running make roll.
+
+```bash
+SHELL := /bin/bash
+REV_FILE=.make-rev-check
+
+set-rev:
+    git rev-parse --short HEAD > $(REV_FILE)
+
+images: set-rev
+    ./deploy/images/make-image.sh deploy/images/app.Dockerfile "rotisserie-app:$$(cat $(REV_FILE))"
+    ./deploy/images/make-image.sh deploy/images/ocr.Dockerfile "rotisserie-ocr:$$(cat $(REV_FILE))"
+    ./deploy/images/make-image.sh deploy/images/static-server.Dockerfile "rotisserie-static:$$(cat $(REV_FILE))"
+
+tag-images: set-rev
+    sudo docker tag "rotisserie-app:$$(cat $(REV_FILE))" "$$docker_username/rotisserie-app:$$(cat $(REV_FILE))"
+    sudo docker tag "rotisserie-ocr:$$(cat $(REV_FILE))" "$$docker_username/rotisserie-ocr:$$(cat $(REV_FILE))"
+    sudo docker tag "rotisserie-static:$$(cat $(REV_FILE))" "$$docker_username/rotisserie-static:$$(cat $(REV_FILE))"
+
+upload-images: set-rev
+    sudo docker push "$$docker_username/rotisserie-app:$$(cat $(REV_FILE))"
+    sudo docker push "$$docker_username/rotisserie-ocr:$$(cat $(REV_FILE))"
+    sudo docker push "$$docker_username/rotisserie-static:$$(cat $(REV_FILE))"
+
+.PHONY: deploy
+deploy: set-rev
+    IMAGE_TAG=$$(cat $(REV_FILE)) envsubst < deploy/rotisserie.yaml | kubectl apply -f -
+
+delete-deployments:
+    kubectl delete deployment rotisserie-app
+    kubectl delete deployment rotisserie-ocr
+
+redeploy: delete-deployments deploy
+
+roll: set-rev images tag-images upload-images deploy
+```
+
+
 ## Conclusion
 
+Originally we were running the application on a VM with Nginx. Deployments were a little bit slower and were a manual process. We eventually containerized the application to speed up development. We ran into a few issues with sensitive data - do we include it in the image build or set it as environment variables in the container? In the end we were setting environment variables and would create the container with -e values, however it was harder to manage. Using Kubernetes allows us to setup secrets which can simplify storing sensitive data. Service discover also allows us to set variables for values instead of hard coding them. Now we can make updates to the application and push those changes within a few minutes. Most of the time is spent uploading the new images.
+
+SSL/TLS configuration with Kube-Lego allows us to quickly get certificates across multiple domains which is very helpful with test environments. Kubernetes removes a lot of the manual work and allows us to focus more on development.
