@@ -1,9 +1,9 @@
-# Node.js Application running in Kubernetes with Kube-Lego
+## Node.js Application running in Kubernetes with Kube-Lego
 
 Kubernetes makes it easy to deploy containerized applications in the cloud. In our use case we created an application that would require three containers, each running in their own pod. The deployment is split up into an application pod, ocr pod, and a static pod. On top of the base deployment we have setup Kube-Lego to manage TLS certificates.
 
 
-## Secrets
+### Secrets
 
 Separate from the deployment itself we are configuring secrets for the Twitch API token and clientID. The secrets are referenced in the application deployment.
 
@@ -20,7 +20,7 @@ data:
 ---
 ```
 
-## Application Pod
+### Application Pod
 
 The application pod consists of a single container running our Node.js app. The application polls the Twitch API for Player Unknown Battlegrounds streams. We record part of the stream and pull out a screenshot that can be sent to the OCR pod for processing.
 
@@ -70,7 +70,7 @@ spec:
 ---
 ```
 
-## OCR Pod
+### OCR Pod
 
 The ocr pod has a single container running an optical character recognition service. Images from the stream are sent over to the OCR service where they are processed. We are looking for the amount of players alive, which is denoted by a number in the top right of the stream. OCR provides the amount of players alive back to the application container where they are processed again to find the person with the lowest count.
 
@@ -114,7 +114,7 @@ spec:
 ---
 ```
 
-## Static Pod
+### Static Pod
 
 ```bash
 ---
