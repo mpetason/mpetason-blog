@@ -171,6 +171,40 @@ spec:
               fieldPath: status.podIP
 ```
 
+The Kube-Lego deployment will also configure an ingress resource and manage it. The values configured in this ingress resource are hard coded. At this time there is not an option to configure custom annotations. SSL-Redirect is configured as false in this resource so that letsencrypt can challenge on port 80:/.well-known/acme-challenge. 
+
+
+```bash
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme-challenge-endpoints: "true"
+  creationTimestamp: 
+  generation: 5
+  name: kube-lego-nginx
+  namespace: default
+  resourceVersion: "3096053"
+  selfLink: /apis/extensions/v1beta1/namespaces/default/ingresses/kube-lego-nginx
+  uid: 
+spec:
+  rules:
+  - host: rotisserie.tv
+    http:
+      paths:
+      - backend:
+          serviceName: kube-lego-nginx
+          servicePort: 8080
+        path: /.well-known/acme-challenge
+status:
+  loadBalancer:
+    ingress:
+    - ip: 
+```
+
 A load balancer service is configured to provide a public IP address. The service will listen on 80 and 443, so we can accept challenge requests from letsencrypt on 80 and then serve the site on 443. In the ingress resource we force SSL redirects when the path matches /, /current, /all. Once the Load Balancer service has been setup we pull the IP address and then configure an A record for our domain so that it points at the IP. 
 
 ```bash
@@ -190,7 +224,8 @@ spec:
     app: nginx
 ```
 
-Kube-Lego supports the Nginx Ingress Controller and GCE. Nginx is used in this deployment. When ingress resources are configured the Nginx Ingress Controller will configure the Nginx pod by editing the Nginx.conf file and then it will reload the service. The ingress controller needs a default backend so we use a basic backend service that can be hit when the domain is not valid. Hitting the LB IP directly will result in - default backend - 404, since we are only configuring ingress to handle Rotisserie.tv (or the APP_DOMAIN value.)
+Kube-Lego supports the Nginx Ingress Controller and GCE. The Nginx default deployment is used in our cluster. When ingress resources are configured the Nginx Ingress Controller will configure the Nginx pod by editing the Nginx.conf file and then it will reload the service. The ingress controller needs a default backend so we use a basic backend service that can be hit when the domain is not valid. Hitting the LB IP directly will result in - default backend - 404, since we are only configuring ingress to handle Rotisserie.tv (or the APP_DOMAIN value.) 
+
 
 ```bash
 apiVersion: extensions/v1beta1
@@ -232,9 +267,9 @@ spec:
         - /nginx-ingress-controller
         - --default-backend-service=default/default-http-backend
         - --nginx-configmap=default/nginx
-```
 
-```bash
+The rotisserie-ingress resource allows us to specify different annotations. In our case we want to redirect http traffic to https. This is where we also configure the different backends. The values are used by the Nginx pod to configure the Nginx.conf. When the values are updated you can view changes to the configuration as well as a reload in the pod by watching the logs. 
+
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -265,90 +300,8 @@ spec:
         backend:
           serviceName: rotisserie-app
           servicePort: 3000
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: kube-lego
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: kube-lego
-    spec:
-      containers:
-      - name: kube-lego
-        image: jetstack/kube-lego:0.1.5
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 3002
-        env:
-        - name: LEGO_EMAIL
-          valueFrom:
-            configMapKeyRef:
-              name: kube-lego
-              key: lego.email
-        - name: LEGO_URL
-          valueFrom:
-            configMapKeyRef:
-              name: kube-lego
-              key: lego.url
-        - name: LEGO_POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
----
 
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: default-http-backend
-  namespace: default
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: default-http-backend
-    spec:
-      containers:
-      - name: default-http-backend
-        image: gcr.io/google_containers/defaultbackend:1.0
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
-        ports:
-        - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: default-http-backend
-  namespace: default
-spec:
-  ports:
-  - port: 80
-    targetPort: 8080
-    protocol: TCP
-  selector:
-    app: default-http-backend
----
-apiVersion: v1
-data:
-  proxy-connect-timeout: "15"
-  proxy-read-timeout: "600"
-  proxy-send-timeout: "600"
-  hsts-include-subdomains: "false"
-  body-size: "64m"
-  server-name-hash-bucket-size: "256"
-kind: ConfigMap
-metadata:
-  namespace: default
-  name: nginx
+## Conclusion
+
+
 `
-```
