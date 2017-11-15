@@ -49,8 +49,6 @@ spec:
               secretKeyRef:
                 name: twitch-auth
                 key: clientID
-          - name: OCR_HOST
-            value: rotisserie.tv
           ports:
             - containerPort: 3000
 ```
