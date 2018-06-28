@@ -25,7 +25,21 @@ The application pod consists of a single container running our Node.js app. The 
 Since we are using secrets, the images are built without sensitive information. In the example below we reference the secret twitch-auth and pull the token needed to authenticate. We also store the clientID, which is required with newer versions of the Twitch API.
 
 ```bash
-       - name: token
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rotisserie-app
+spec:
+  template:
+    metadata:
+      labels:
+        app: rotisserie-app
+    spec:
+      containers:
+        - name: rotisserie-app
+          image: container-registry.dev.ibmesports.com/rotisserie-app:$IMAGE_TAG
+          env:
+          - name: token
             valueFrom:
               secretKeyRef:
                 name: twitch-auth
@@ -35,6 +49,8 @@ Since we are using secrets, the images are built without sensitive information. 
               secretKeyRef:
                 name: twitch-auth
                 key: clientID
+          ports:
+            - containerPort: 3000
 ```
 
 To simplify deployment we are using environment variables for a few values. APP_HOSTNAME is used throughout the deployment to specify the URL for the application. In our production environment the value is set to rotisserie.tv. Since the OCR_HOST is running behind the same URL we set the value to equal the hostname.
@@ -251,13 +267,6 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 10254
-            scheme: HTTP
-          initialDelaySeconds: 30
-          timeoutSeconds: 5
         ports:
         - containerPort: 80
         - containerPort: 443
