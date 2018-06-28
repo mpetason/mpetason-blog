@@ -82,6 +82,13 @@ Normally if the issuer is working, and DNS is resolving, we should be able to ge
 kubectl get secret
 ```
 
-If everything worked then you should see the cert that we setup in the ingress resource as a secret.
+If the secret exists we can go back over to the ingress resource to see if the ingress controller was able to load our cert.
 
-If we have broken resources we can modify the yaml file and re-apply the changes to update the deployment. When I'm troubleshooting I usually remove a resource if it has failed, and allow it to rebuild, but usually after I have figured out what is breaking in the cluster. If the Issuer isn't working, but it starts working after we change the acme endpoint, then we can delete and recreate the certificate. We also want to verify that the Ingress Resource is getting configured properly, but that usually takes care of itself ater all of the correct secrets are configured.
+```bash
+  Warning  TLSSecretNotFound  26m   public-cr0ba8157fd1a6454ca7ba3125b9b44ff6-alb1-5895555f68-bl976  Failed to apply ingress resource.
+  Warning  TLSSecretNotFound  26m   public-cr0ba8157fd1a6454ca7ba3125b9b44ff6-alb1-5895555f68-25nhq  Failed to apply ingress resource.
+  Normal   Success            11s   public-cr0ba8157fd1a6454ca7ba3125b9b44ff6-alb1-5895555f68-25nhq  Successfully applied ingress resource.
+  Normal   Success            11s   public-cr0ba8157fd1a6454ca7ba3125b9b44ff6-alb1-5895555f68-bl976  Successfully applied ingress resource.
+```
+
+Success! Now we can hit the site and see if the cert worked properly.
