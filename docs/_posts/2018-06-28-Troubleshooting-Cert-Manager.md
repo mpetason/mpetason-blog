@@ -1,10 +1,18 @@
 ## Troubleshooting tips for Cert-Manager
 
+What is Cert-Manager? - In Progress
+
+https://github.com/jetstack/cert-manager
+
+Where are am I running this? In Progress
+
+IBM Cloud IKS
+
 Most of the common issues seem to come from slow DNS resolution. If you are configuring an A record for your domain around the same time as deployment then you will probably run into issues when letsencrypt attempts to verify the domain. If the domain is not resolving yet, then we can assume that the challenge file is not reachable.
 
 After deploying in Kubernetes we will want to take a look at ingress resources. The ingress resources will be used by the ingress controller to configure nginx, and then reload the configuration. In Bluemix we end up using the automatically provisioned LoadBalancer Service which is in the kube-system namespace.
 
-First we need to see which ingress resources were created. We can do so with the command below. If we are checking in a different namespace then we need to append -n NNAMESPACE_NAME
+First we need to see which ingress resources were created. We can do so with the command below. If we are checking in a different namespace then we need to append -n NAMESPACE_NAME
 
 ```bash
 kubectl get ingress
