@@ -28,7 +28,7 @@ Find the name of the resource that was recently created and then describe it.
 kubectl describe ingress INGRESS_NAME
 ```
 
-Check for valuable information in Events. Normally we'll see something like "failed to apply ingress resource" in the message field, and if we check the "Reason" field we'll actually get a useful error message. This is great coming from OpenStack where an error message felt more like a vague comment about something not working.
+Check for valuable information in Events. Normally we'll see something like "failed to apply ingress resource" in the message field, and if we check the "Reason" field we'll actually get a useful error message. This is great for sysadmins and developers since it means they get useful information without having to look at log files on an actual server.
 
 ```bash
 Events:
