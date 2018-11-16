@@ -16,11 +16,29 @@ IKS is IBM's Kubernetes offering. It provides a farily vanilla version of K8s, w
 
 With the updates to Cert-Manager more Ingress Controllers are supported, which includes the Ingress Controller we are using in IKS. The biggest difference I can see between Kube-Lego and Cert-Manager is how the ingress resources are configured. In Kube-Lego there would be at least 2 ingress resources per domain, which would break certain ingress controllers as they were not expecting nmore than one resource per dns record.
 
-##DNS
+##Troubleshooting
 
 Most of the common issues seem to come from slow DNS resolution. If you are configuring an A record for your domain around the same time as deployment then you will probably run into issues when letsencrypt attempts to verify the domain. If the domain is not resolving yet, then we can assume that the challenge file is not reachable.
 
-After deploying in Kubernetes we will want to take a look at ingress resources. The ingress resources will be used by the ingress controller to configure nginx, and then reload the configuration. In Bluemix we end up using the automatically provisioned LoadBalancer Service which is in the kube-system namespace.
+Great, but what does that mean and why do I care? So we need resolution to work because LetsEncrypt is going to issue a challenge to make sure that the domain actually exists and that it wants to be configured by LetsEncrypt. Basically there's a challenge file that needs to exist in a specific location and is being served on port 80. If it exists then LetsEncrypt will progress. If DNS is not configured correctly, or it hasn't resolved, then LetsEncrypt will be unable to resolve the domain and will also fail at finding the challenge file.
+
+Since we are using IKS we'll be setup with an ingress contorller + ingress resource by default. When settting up DNS we'll want to use the IP address associated with the ingress controller and loadbalancer service that has been configured. Where can we find this valuable information? It's going to be in the kube-system namespace.
+
+```bash
+kubectl get svc -n kube-system |grep -i "public"
+```
+
+We'll see output similar to:
+
+```bash
+public-crf3df42c3c8a142c8a3e0ee73ed4e58e2-alb1   LoadBalancer   172.21.39.18     169.61.23.142   80:31337/TCP,443:31615/TCP   106d
+```
+
+We need to pull out the public IP, which in this case is 169.61.23.142 and use that to setup an A record for the hostname we are using. The great part about having an ingress controller already configured on the cluster is that we can manage multiple domains. In this demo I setup multiple domains to point to the same IP address and then used ingress resources + cert-manager + the ingress controller to manage traffic resolution based on the hostname. When the DNS record finally resolves you can move along and attempt a deployment. 
+
+```bash
+lp.mpetason.com has address 169.61.23.142
+```
 
 First we need to see which ingress resources were created. We can do so with the command below. If we are checking in a different namespace then we need to append -n NAMESPACE_NAME
 
