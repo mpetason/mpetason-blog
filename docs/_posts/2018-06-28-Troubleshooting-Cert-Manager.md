@@ -1,12 +1,16 @@
 ## Troubleshooting tips for Cert-Manager
 
-What is Cert-Manager? - In Progress
+Before we can start troubleshooting issues we need to discuss the software we are using. Cert-manager is the next step in the kube-lego project, which handles provisioning of TLS certficiates for Kubernetes. Basically it takes away the manual work of requesting a cert, configuring the cert, and installing the cert. Instead of working directly with Ngxinx we can describe what we want configured and the rest is taken care of automatically with ingress resources and the ingress controller. Cert-Manager configures new Kubernetes resources that can be used to configure cerficiates - Certs and Issuers. There are two kinds of issuers, ClusterIssuer and Issuer, which have different scopes. A ClusterIssuer will manage certificates for the entire cluster, however in our example we are using an Issuer instead which only controls a single namespace.
+
+For a more detailed overview of Cert-Manager check out their github project page:
 
 https://github.com/jetstack/cert-manager
 
-Where are am I running this? In Progress
+For this Blog/Troubleshooting Demo I'm using IBM Cloud Kubernetes Service or "IKS".
 
-IBM Cloud IKS
+https://www.ibm.com/cloud/container-service
+
+With the updates to Cert-Manager more Ingress Controllers are supported, which includes the Ingress Controller we are using in IKS. The biggest difference I can see between Kube-Lego and Cert-Manager is how the ingress resources are configured. In Kube-Lego there would be at least 2 ingress resources per domain, which would break certain ingress controllers as they were not expecting nmore than one resource per dns record. 
 
 Most of the common issues seem to come from slow DNS resolution. If you are configuring an A record for your domain around the same time as deployment then you will probably run into issues when letsencrypt attempts to verify the domain. If the domain is not resolving yet, then we can assume that the challenge file is not reachable.
 
