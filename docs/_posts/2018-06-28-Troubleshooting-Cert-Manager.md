@@ -1,6 +1,6 @@
 ##What is Cert-Manager?
 
-Before we can start troubleshooting issues we need to discuss the software we are using. Cert-manager is the next step in the kube-lego project, which handles provisioning of TLS certficiates for Kubernetes. Basically it takes away the manual work of requesting a cert, configuring the cert, and installing the cert. Instead of working directly with Ngxinx we can describe what we want configured and the rest is taken care of automatically with ingress resources and the ingress controller. Cert-Manager configures new Kubernetes resources that can be used to configure cerficiates - Certs and Issuers. There are two kinds of issuers, ClusterIssuer and Issuer, which have different scopes. A ClusterIssuer will manage certificates for the entire cluster, however in our example we are using an Issuer which only controls a single namespace.
+Before we can start troubleshooting issues we need to discuss the software we are using. Cert-manager is the next step in the kube-lego project, which handles provisioning of TLS certficiates for Kubernetes. Basically it takes away the manual work of requesting a cert, configuring the cert, and installing the cert. Instead of working directly with Nginx we can describe what we want configured then the rest is taken care of automatically with ingress resources and the ingress controller. Cert-Manager configures new Kubernetes resource types that can be used to configure cerficiates - Certs and Issuers. There are two kinds of issuers, ClusterIssuer and Issuer, which have different scopes. A ClusterIssuer will manage certificates for the entire cluster, however in our example we are using an Issuer which only controls a single namespace.
 
 For a more detailed overview of Cert-Manager check out their github project page:
 
@@ -14,7 +14,7 @@ https://www.ibm.com/cloud/container-service
 
 IKS is IBM's Kubernetes offering. It provides a farily vanilla version of K8s, which makes it great for testing deployments and new features or projects that extend K8s.
 
-With the updates to Cert-Manager more Ingress Controllers are supported, which includes the Ingress Controller we are using in IKS. The biggest difference I can see between Kube-Lego and Cert-Manager is how the ingress resources are configured. In Kube-Lego there would be at least 2 ingress resources per domain, which would break certain ingress controllers as they were not expecting nmore than one resource per dns record.
+The new Cert-Manager project supports more Ingress Controllers. Kube-Lego was limited in supporting different Ingress Controllers. The biggest difference I can see between Kube-Lego and Cert-Manager is how the ingress resources are configured. In Kube-Lego there would be at least 2 ingress resources per domain, which would break certain ingress controllers as they were not expecting nmore than one resource per dns record.
 
 ##Troubleshooting
 
