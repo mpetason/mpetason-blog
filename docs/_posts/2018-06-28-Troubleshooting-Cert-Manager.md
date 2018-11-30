@@ -16,6 +16,12 @@ IKS is IBM's Kubernetes offering. It provides a farily vanilla version of K8s, w
 
 The new Cert-Manager project supports more Ingress Controllers. Kube-Lego was limited in supporting different Ingress Controllers. The biggest difference I can see between Kube-Lego and Cert-Manager is how the ingress resources are configured. In Kube-Lego there would be at least 2 ingress resources per domain, which would break certain ingress controllers as they were not expecting nmore than one resource per dns record.
 
+##Setup
+
+The application was deployed using HTTP validation. Troubleshooting assumes the steps in the documentation below have been followed. 
+
+http://docs.cert-manager.io/en/latest/tutorials/acme/http-validation.html
+
 ##Troubleshooting
 
 Most of the common issues seem to come from slow DNS resolution. If you are configuring an A record for your domain around the same time as deployment then you will probably run into issues when letsencrypt attempts to verify the domain. If the domain is not resolving yet, then we can assume that the challenge file is not reachable.
