@@ -1,5 +1,3 @@
-## Ingress Controllers and Load Balancers
-
 In this article I will be working with the default Ingress Controller provided by the IKS service on IBMCloud. 
 
 # Where is this stuff? 
@@ -17,4 +15,3 @@ kubernetes-dashboard                             ClusterIP      172.21.176.122  
 public-crf3df42c3c8a142c8a3e0ee73ed4e58e2-alb1   LoadBalancer   172.21.39.18     169.*.*.*       80:30112/TCP,443:31207/TCP   125d
 tiller-deploy                                    ClusterIP      172.21.12.225    <none>          44134/TCP                    125d
 ```
-
