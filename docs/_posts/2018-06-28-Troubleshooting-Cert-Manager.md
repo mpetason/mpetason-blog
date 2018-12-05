@@ -1,3 +1,6 @@
+## Troubleshooting Cert Manager
+
+
 ## What is Cert-Manager?
 
 Before we can start troubleshooting issues we need to discuss the software we are using. Cert-manager is the next step in the kube-lego project, which handles provisioning of TLS certficiates for Kubernetes. Basically it takes away the manual work of requesting a cert, configuring the cert, and installing the cert. Instead of working directly with Nginx we can describe what we want configured then the rest is taken care of automatically with ingress resources and the ingress controller. Cert-Manager configures new Kubernetes resource types that can be used to configure cerficiates - Certs and Issuers. There are two kinds of issuers, ClusterIssuer and Issuer, which have different scopes. A ClusterIssuer will manage certificates for the entire cluster, however in our example we are using an Issuer which only controls a single namespace.
