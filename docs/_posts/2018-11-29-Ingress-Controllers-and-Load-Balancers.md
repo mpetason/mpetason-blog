@@ -9,7 +9,7 @@ A Load Balancer in Kubernetes is a service that provides a public endpoint.
 
 # Ingress Controller and Resource Overview
 
-An Ingress Congroller usually sits behind a Load Balancer and allows for resource based control over HTTP endpoint configurations. Commonly this will help configure Nginx without having to edit it by hand. The resources are defined in an Ingress Resource. 
+An Ingress Controller usually sits behind a Load Balancer and allows for resource based control over HTTP endpoint configurations. Commonly this will help configure Nginx without having to edit it by hand. The resources are defined in an Ingress Resource. 
 
 
 # Where is this stuff? 
