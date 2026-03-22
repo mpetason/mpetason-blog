@@ -926,30 +926,82 @@ section:not(#hero) {
   letter-spacing: 0.02em;
 }
 
+.ai-status-label {
+  position: relative;
+  height: 22px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.ai-status-label span {
+  position: absolute;
+  left: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--text);
+  letter-spacing: 0.03em;
+}
+
 .ai-progress-fill {
   position: absolute;
   left: 0; top: 0;
   height: 100%;
-  background: linear-gradient(90deg, rgba(240,80,176,0.25), rgba(240,80,176,0.5));
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
+  background: linear-gradient(90deg, #7700cc, #cc00ff, #ff00aa, #00ccff, #7700cc);
+  background-size: 300% 100%;
   overflow: hidden;
-  white-space: nowrap;
   z-index: 2;
-  animation: aiFill 14s linear 0.8s infinite;
+  animation: aiFill 14s linear 0.8s infinite, magicFlow 2.5s linear infinite;
+}
+
+/* Sparkle star dots overlay */
+.ai-progress-fill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.95) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.7) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 18px 18px, 27px 27px, 11px 11px;
+  background-position: 3px 4px, 9px 11px, 14px 6px;
+  animation: sparkleDrift 1.8s linear infinite;
+  pointer-events: none;
+}
+
+/* Shimmer wave */
+.ai-progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.22) 50%, transparent 100%);
+  background-size: 50% 100%;
+  animation: shimmerWave 1.6s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .ai-loading-text {
-  color: #f472b6;
   animation: aiLoadText 14s linear 0.8s infinite;
-  white-space: nowrap;
+}
+
+@keyframes magicFlow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+
+@keyframes sparkleDrift {
+  from { background-position: 3px 4px, 9px 11px, 14px 6px; }
+  to   { background-position: 21px 4px, 36px 11px, 25px 6px; }
+}
+
+@keyframes shimmerWave {
+  0%   { background-position: -50% 0; }
+  100% { background-position: 150% 0; }
 }
 
 .ai-success-text {
-  color: #a0ffb0;
   animation: aiSuccessText 14s linear 0.8s infinite;
-  white-space: nowrap;
   opacity: 0;
 }
 
@@ -964,27 +1016,18 @@ section:not(#hero) {
 }
 
 .ai-thanks {
-  position: absolute;
-  white-space: nowrap;
-  color: var(--text-muted);
   animation: aiThanks 14s linear 0.8s infinite;
   opacity: 0;
 }
 
 .ai-rest {
-  position: absolute;
-  white-space: nowrap;
-  color: var(--cyan);
-  font-weight: 600;
   animation: aiRest 14s linear 0.8s infinite;
   opacity: 0;
 }
 
 .ai-dots {
-  display: inline-block;
-  overflow: hidden;
-  max-width: 0;
-  vertical-align: bottom;
+  display: inline;
+  opacity: 0;
   animation: aiDots 14s linear 0.8s infinite;
 }
 
@@ -993,26 +1036,6 @@ section:not(#hero) {
   margin: 6px 0 10px;
 }
 
-.ai-troll {
-  position: absolute;
-  right: 8px;
-  top: -2px;
-  font-size: 1.1rem;
-  line-height: 1;
-  transform: translateY(100%);
-  animation: aiTroll 14s linear 0.8s infinite;
-  z-index: 10;
-  pointer-events: none;
-}
-
-@keyframes aiTroll {
-  0%   { transform: translateY(100%); opacity: 0; }
-  33%  { transform: translateY(100%); opacity: 0; }
-  36%  { transform: translateY(-55%); opacity: 1; } /* peeks up */
-  50%  { transform: translateY(-55%); opacity: 1; } /* stays while dots */
-  57%  { transform: translateY(100%); opacity: 0; } /* ducks back down */
-  100% { transform: translateY(100%); opacity: 0; }
-}
 
 /* Remove old margin from .ai-progress-bar since wrap handles it */
 /* 14s loop. Key moments:
@@ -1082,12 +1105,52 @@ section:not(#hero) {
 }
 
 @keyframes aiDots {
-  0%   { max-width: 0; opacity: 1; }
-  36%  { max-width: 0; opacity: 1; }
-  50%  { max-width: 4em; opacity: 1; }
-  54%  { max-width: 4em; opacity: 1; }
-  57%  { max-width: 4em; opacity: 0; }
-  100% { max-width: 0; opacity: 0; }
+  0%   { opacity: 0; }
+  36%  { opacity: 0; }
+  40%  { opacity: 1; }
+  54%  { opacity: 1; }
+  57%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* AI progress bar — per-theme overrides */
+[data-theme="light"] .ai-progress-bar {
+  background: rgba(187, 34, 136, 0.07);
+  border-color: rgba(187, 34, 136, 0.45);
+}
+/* Light — warmer magic palette, fully opaque for visibility */
+[data-theme="light"] .ai-progress-bar {
+  background: rgba(100, 0, 160, 0.06);
+  border-color: rgba(140, 0, 200, 0.4);
+}
+[data-theme="light"] .ai-progress-fill {
+  background: linear-gradient(90deg, #c060ff, #ff60cc, #ffaa00, #60d0ff, #c060ff);
+  background-size: 300% 100%;
+}
+[data-theme="light"] .ai-status-label span {
+  background: rgba(0, 0, 0, 0.12);
+  color: #1a0040;
+}
+
+/* Dark — default magic gradient works, just enrich the container */
+[data-theme="dark"] .ai-progress-bar {
+  background: rgba(100, 0, 180, 0.08);
+  border-color: rgba(180, 0, 255, 0.4);
+}
+
+/* Psychedelic — ultra neon magic */
+[data-theme="psychedelic"] .ai-progress-bar {
+  background: rgba(255, 0, 255, 0.08);
+  border-color: rgba(255, 0, 255, 0.6);
+  box-shadow: 0 0 16px rgba(255,0,255,0.2);
+}
+[data-theme="psychedelic"] .ai-progress-fill {
+  background: linear-gradient(90deg, #ff00ff, #ff0088, #00ffff, #00ff88, #ff00ff);
+  background-size: 300% 100%;
+}
+[data-theme="psychedelic"] .ai-status-label span {
+  background: rgba(0, 0, 0, 0.65);
+  color: #00ffee;
 }
 
 /* ── VIDEOS ── */
@@ -1386,3 +1449,196 @@ footer p {
   #hero { padding-left: 24px; padding-right: 24px; }
   .container { padding: 0 24px; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   ✦  MAGICAL / HIGH FANTASY ENHANCEMENTS  ✦
+   ═══════════════════════════════════════════════════════ */
+
+/* ── 1. STAR FIELD — CSS-only, on .aurora::before ── */
+.aurora::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Stars as radial-gradient dots scattered across the canvas */
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.75) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.40) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(255,255,255,0.30) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.20) 2px, transparent 2px),
+    radial-gradient(circle, rgba(255,255,255,0.60) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.35) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.50) 1.5px, transparent 1.5px);
+  background-size:
+    233px 233px,
+    179px 179px,
+    307px 307px,
+    151px 151px,
+    421px 421px,
+    97px 97px,
+    263px 263px,
+    347px 347px;
+  background-position:
+    12px  48px,
+    67px  132px,
+    198px 71px,
+    44px  201px,
+    311px 88px,
+    81px  17px,
+    155px 278px,
+    29px  355px;
+  animation: starTwinkle 8s ease-in-out infinite alternate;
+}
+
+@keyframes starTwinkle {
+  0%   { opacity: 0.55; }
+  25%  { opacity: 0.80; }
+  50%  { opacity: 0.45; }
+  75%  { opacity: 0.75; }
+  100% { opacity: 0.60; }
+}
+
+/* Light theme — gold/lavender tinted stars */
+[data-theme="light"] .aurora::before {
+  background-image:
+    radial-gradient(circle, rgba(200,160,80,0.70) 1px, transparent 1px),
+    radial-gradient(circle, rgba(160,120,220,0.55) 1px, transparent 1px),
+    radial-gradient(circle, rgba(200,160,80,0.40) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(160,120,220,0.35) 1px, transparent 1px),
+    radial-gradient(circle, rgba(200,160,80,0.25) 2px, transparent 2px),
+    radial-gradient(circle, rgba(120,160,220,0.55) 1px, transparent 1px),
+    radial-gradient(circle, rgba(200,160,80,0.35) 1px, transparent 1px),
+    radial-gradient(circle, rgba(160,120,220,0.45) 1.5px, transparent 1.5px);
+  animation: starTwinkle 10s ease-in-out infinite alternate;
+}
+
+/* Psychedelic — neon colored stars */
+[data-theme="psychedelic"] .aurora::before {
+  background-image:
+    radial-gradient(circle, rgba(0,255,255,0.85) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,0,255,0.70) 1px, transparent 1px),
+    radial-gradient(circle, rgba(0,255,136,0.55) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(255,0,102,0.50) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,0,0.40) 2px, transparent 2px),
+    radial-gradient(circle, rgba(0,255,255,0.75) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,0,255,0.55) 1px, transparent 1px),
+    radial-gradient(circle, rgba(0,255,136,0.60) 1.5px, transparent 1.5px);
+  animation: starTwinkle 4s ease-in-out infinite alternate;
+}
+
+/* ── 2. SECTION LABELS — rune/magic marker ✦ symbol ── */
+.section-label::before {
+  content: "✦";
+  color: var(--cyan);
+  font-size: 0.75em;
+  opacity: 0.85;
+  flex-shrink: 0;
+  animation: runeFlicker 6s ease-in-out infinite;
+}
+
+@keyframes runeFlicker {
+  0%, 100% { opacity: 0.85; }
+  40%       { opacity: 0.55; }
+  45%       { opacity: 0.90; }
+  50%       { opacity: 0.60; }
+  55%       { opacity: 0.90; }
+}
+
+/* ── 3. CARD GLOW — soft persistent shadow per theme ── */
+.glass,
+.project-card,
+.stat,
+.contact-card {
+  box-shadow: 0 0 20px rgba(6, 214, 240, 0.08);
+}
+
+[data-theme="light"] .glass,
+[data-theme="light"] .project-card,
+[data-theme="light"] .stat,
+[data-theme="light"] .contact-card {
+  box-shadow: 0 0 20px rgba(100, 60, 200, 0.08);
+}
+
+/* Psychedelic card glow — persistent baseline the cardPulse animation builds on */
+[data-theme="psychedelic"] .glass,
+[data-theme="psychedelic"] .project-card,
+[data-theme="psychedelic"] .stat,
+[data-theme="psychedelic"] .contact-card {
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.10);
+}
+
+/* ── 4. TIMELINE DOTS — gentle radial glow pulse ── */
+@keyframes dotGlowPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(6, 214, 240, 0.5),
+                0 0 16px rgba(6, 214, 240, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(6, 214, 240, 0.8),
+                0 0 36px rgba(124, 77, 255, 0.35),
+                0 0 54px rgba(6, 214, 240, 0.1);
+  }
+}
+
+.timeline-dot {
+  animation: dotGlowPulse 3.5s ease-in-out infinite;
+}
+
+@keyframes dotGlowPulseLite {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(0, 136, 170, 0.45),
+                0 0 16px rgba(79, 40, 187, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(0, 136, 170, 0.70),
+                0 0 36px rgba(79, 40, 187, 0.25);
+  }
+}
+
+[data-theme="light"] .timeline-dot {
+  animation: dotGlowPulseLite 3.5s ease-in-out infinite;
+}
+
+@keyframes dotGlowPulsePsych {
+  0%   { box-shadow: 0 0 10px rgba(255,  0, 255, 0.7), 0 0 24px rgba(255,  0, 255, 0.3); }
+  33%  { box-shadow: 0 0 14px rgba(  0, 255, 255, 0.8), 0 0 32px rgba(  0, 255, 255, 0.4); }
+  66%  { box-shadow: 0 0 12px rgba(  0, 255, 136, 0.7), 0 0 28px rgba(  0, 255, 136, 0.3); }
+  100% { box-shadow: 0 0 10px rgba(255,  0, 255, 0.7), 0 0 24px rgba(255,  0, 255, 0.3); }
+}
+
+[data-theme="psychedelic"] .timeline-dot {
+  animation: dotGlowPulsePsych 2s ease-in-out infinite;
+}
+
+/* ── 5. AURORA ORB ENHANCEMENTS ── */
+
+/* Dark mode — slightly larger, richer orbs */
+.aurora-orb:nth-child(1) {
+  width: 62vw; height: 62vw;
+  opacity: 0.22;
+}
+.aurora-orb:nth-child(2) {
+  width: 52vw; height: 52vw;
+  opacity: 0.18;
+}
+.aurora-orb:nth-child(3) {
+  width: 42vw; height: 42vw;
+  opacity: 0.13;
+}
+
+/* Light mode — lavender/gold palette for the orbs */
+[data-theme="light"] .aurora-orb:nth-child(1) {
+  background: radial-gradient(circle, #9b59b6, transparent 70%);
+  opacity: 0.30;
+}
+[data-theme="light"] .aurora-orb:nth-child(2) {
+  background: radial-gradient(circle, #c8a040, transparent 70%);
+  opacity: 0.24;
+}
+[data-theme="light"] .aurora-orb:nth-child(3) {
+  background: radial-gradient(circle, #7b6fc8, transparent 70%);
+  opacity: 0.20;
+  width: 40vw; height: 40vw;
+}
+
