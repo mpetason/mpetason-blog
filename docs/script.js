@@ -13,8 +13,7 @@ function setTheme(mode) {
 }
 
 const saved = localStorage.getItem('theme');
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-setTheme(saved || (prefersDark ? 'dark' : 'light'));
+setTheme(saved || 'psychedelic');
 
 opts.forEach(btn => btn.addEventListener('click', () => setTheme(btn.dataset.mode)));
 
