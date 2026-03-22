@@ -217,9 +217,6 @@ section, nav, footer { position: relative; z-index: 2; }
 [data-theme="light"] .aurora-orb:nth-child(2) { opacity: 0.22; }
 [data-theme="light"] .aurora-orb:nth-child(3) { opacity: 0.18; }
 
-[data-theme="light"] .aurora::after {
-  background-image: radial-gradient(circle, rgba(0,0,0,0.07) 1px, transparent 1px);
-}
 
 /* ── PSYCHEDELIC MODE ── */
 [data-theme="psychedelic"] #navbar {
@@ -291,10 +288,6 @@ section, nav, footer { position: relative; z-index: 2; }
   to   { box-shadow: 0 0 28px var(--emerald), 0 0 56px rgba(0,255,136,0.3); }
 }
 
-[data-theme="psychedelic"] .aurora::after {
-  background-image: radial-gradient(circle, rgba(255,0,255,0.14) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
 
 /* ── THEME SWITCHER PILL ── */
 #theme-switcher {
@@ -932,6 +925,9 @@ section:not(#hero) {
   margin-bottom: 5px;
   display: flex;
   align-items: center;
+  background: var(--bg);
+  z-index: 10;
+  isolation: isolate;
 }
 
 .ai-status-label span {
@@ -955,20 +951,6 @@ section:not(#hero) {
   animation: aiFill 14s linear 0.8s infinite, magicFlow 2.5s linear infinite;
 }
 
-/* Sparkle star dots overlay */
-.ai-progress-fill::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,0.95) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.7) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px);
-  background-size: 18px 18px, 27px 27px, 11px 11px;
-  background-position: 3px 4px, 9px 11px, 14px 6px;
-  animation: sparkleDrift 1.8s linear infinite;
-  pointer-events: none;
-}
 
 /* Shimmer wave */
 .ai-progress-fill::after {
@@ -990,10 +972,6 @@ section:not(#hero) {
   100% { background-position: 300% 50%; }
 }
 
-@keyframes sparkleDrift {
-  from { background-position: 3px 4px, 9px 11px, 14px 6px; }
-  to   { background-position: 21px 4px, 36px 11px, 25px 6px; }
-}
 
 @keyframes shimmerWave {
   0%   { background-position: -50% 0; }
@@ -1452,78 +1430,7 @@ footer p {
    ✦  MAGICAL / HIGH FANTASY ENHANCEMENTS  ✦
    ═══════════════════════════════════════════════════════ */
 
-/* ── 1. STAR FIELD — CSS-only, on .aurora::before ── */
-.aurora::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  /* Stars as radial-gradient dots scattered across the canvas */
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,0.75) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.40) 1.5px, transparent 1.5px),
-    radial-gradient(circle, rgba(255,255,255,0.30) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.20) 2px, transparent 2px),
-    radial-gradient(circle, rgba(255,255,255,0.60) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.35) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.50) 1.5px, transparent 1.5px);
-  background-size:
-    233px 233px,
-    179px 179px,
-    307px 307px,
-    151px 151px,
-    421px 421px,
-    97px 97px,
-    263px 263px,
-    347px 347px;
-  background-position:
-    12px  48px,
-    67px  132px,
-    198px 71px,
-    44px  201px,
-    311px 88px,
-    81px  17px,
-    155px 278px,
-    29px  355px;
-  animation: starTwinkle 8s ease-in-out infinite alternate;
-}
-
-@keyframes starTwinkle {
-  0%   { opacity: 0.55; }
-  25%  { opacity: 0.80; }
-  50%  { opacity: 0.45; }
-  75%  { opacity: 0.75; }
-  100% { opacity: 0.60; }
-}
-
-/* Light theme — gold/lavender tinted stars */
-[data-theme="light"] .aurora::before {
-  background-image:
-    radial-gradient(circle, rgba(200,160,80,0.70) 1px, transparent 1px),
-    radial-gradient(circle, rgba(160,120,220,0.55) 1px, transparent 1px),
-    radial-gradient(circle, rgba(200,160,80,0.40) 1.5px, transparent 1.5px),
-    radial-gradient(circle, rgba(160,120,220,0.35) 1px, transparent 1px),
-    radial-gradient(circle, rgba(200,160,80,0.25) 2px, transparent 2px),
-    radial-gradient(circle, rgba(120,160,220,0.55) 1px, transparent 1px),
-    radial-gradient(circle, rgba(200,160,80,0.35) 1px, transparent 1px),
-    radial-gradient(circle, rgba(160,120,220,0.45) 1.5px, transparent 1.5px);
-  animation: starTwinkle 10s ease-in-out infinite alternate;
-}
-
-/* Psychedelic — neon colored stars */
-[data-theme="psychedelic"] .aurora::before {
-  background-image:
-    radial-gradient(circle, rgba(0,255,255,0.85) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,0,255,0.70) 1px, transparent 1px),
-    radial-gradient(circle, rgba(0,255,136,0.55) 1.5px, transparent 1.5px),
-    radial-gradient(circle, rgba(255,0,102,0.50) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,0,0.40) 2px, transparent 2px),
-    radial-gradient(circle, rgba(0,255,255,0.75) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,0,255,0.55) 1px, transparent 1px),
-    radial-gradient(circle, rgba(0,255,136,0.60) 1.5px, transparent 1.5px);
-  animation: starTwinkle 4s ease-in-out infinite alternate;
-}
+/* ── 1. STAR FIELD — removed (caused dot artifacts over text) ── */
 
 /* ── 2. SECTION LABELS — rune/magic marker ✦ symbol ── */
 .section-label::before {
