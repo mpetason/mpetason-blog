@@ -904,6 +904,192 @@ section:not(#hero) {
   box-shadow: 0 4px 16px rgba(240,80,176,0.15);
 }
 
+.skills-group:nth-child(5) .skill-tags span {
+  background: rgba(6,214,240,0.07);
+  color: var(--cyan);
+  border: 1px solid rgba(6,214,240,0.15);
+}
+.skills-group:nth-child(5) .skill-tags span:hover {
+  box-shadow: 0 4px 16px rgba(6,214,240,0.15);
+}
+
+/* AI Tools progress bar */
+.ai-progress-bar {
+  position: relative;
+  height: 22px;
+  border-radius: 11px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(240,80,176,0.25);
+  font-size: 0.68rem;
+  font-family: var(--mono);
+  letter-spacing: 0.02em;
+}
+
+.ai-progress-fill {
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(240,80,176,0.25), rgba(240,80,176,0.5));
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  overflow: hidden;
+  white-space: nowrap;
+  z-index: 2;
+  animation: aiFill 14s linear 0.8s infinite;
+}
+
+.ai-loading-text {
+  color: #f472b6;
+  animation: aiLoadText 14s linear 0.8s infinite;
+  white-space: nowrap;
+}
+
+.ai-success-text {
+  color: #a0ffb0;
+  animation: aiSuccessText 14s linear 0.8s infinite;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.ai-progress-empty {
+  position: absolute;
+  left: 0; top: 0; right: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  z-index: 1;
+}
+
+.ai-thanks {
+  position: absolute;
+  white-space: nowrap;
+  color: var(--text-muted);
+  animation: aiThanks 14s linear 0.8s infinite;
+  opacity: 0;
+}
+
+.ai-rest {
+  position: absolute;
+  white-space: nowrap;
+  color: var(--cyan);
+  font-weight: 600;
+  animation: aiRest 14s linear 0.8s infinite;
+  opacity: 0;
+}
+
+.ai-dots {
+  display: inline-block;
+  overflow: hidden;
+  max-width: 0;
+  vertical-align: bottom;
+  animation: aiDots 14s linear 0.8s infinite;
+}
+
+.ai-progress-wrap {
+  position: relative;
+  margin: 6px 0 10px;
+}
+
+.ai-troll {
+  position: absolute;
+  right: 8px;
+  top: -2px;
+  font-size: 1.1rem;
+  line-height: 1;
+  transform: translateY(100%);
+  animation: aiTroll 14s linear 0.8s infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+
+@keyframes aiTroll {
+  0%   { transform: translateY(100%); opacity: 0; }
+  33%  { transform: translateY(100%); opacity: 0; }
+  36%  { transform: translateY(-55%); opacity: 1; } /* peeks up */
+  50%  { transform: translateY(-55%); opacity: 1; } /* stays while dots */
+  57%  { transform: translateY(100%); opacity: 0; } /* ducks back down */
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* Remove old margin from .ai-progress-bar since wrap handles it */
+/* 14s loop. Key moments:
+   0-3s   (0-21%)  : fill 0→75%, Loading blinks
+   3-4s   (21-29%) : Thanks Claude
+   4-5s   (29-36%) : I Got The Rest
+   5-7s   (36-50%) : dots blink in
+   7-8.5s (50-61%) : fill 75→100%, dots end at ~90% (55%)
+   8.5-10.5s (61-75%): success blinks
+   10.5-12s  (75-86%): hold
+   12-14s    (86-100%): reset
+*/
+
+@keyframes aiFill {
+  0%   { width: 0%; }
+  21%  { width: 75%; }
+  50%  { width: 75%; }
+  55%  { width: 90%; }
+  61%  { width: 100%; }
+  85%  { width: 100%; }
+  99%  { width: 100%; }
+  100% { width: 0%; }
+}
+
+@keyframes aiLoadText {
+  0%   { opacity: 0; }
+  3%   { opacity: 1; }
+  8%   { opacity: 0; }
+  13%  { opacity: 1; }
+  18%  { opacity: 0; }
+  20%  { opacity: 1; }
+  22%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes aiSuccessText {
+  0%   { opacity: 0; }
+  61%  { opacity: 0; }
+  63%  { opacity: 1; }
+  65%  { opacity: 0; }
+  67%  { opacity: 1; }
+  69%  { opacity: 0; }
+  71%  { opacity: 1; }
+  73%  { opacity: 0; }
+  75%  { opacity: 1; }
+  85%  { opacity: 1; }
+  88%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes aiThanks {
+  0%   { opacity: 0; }
+  23%  { opacity: 0; }
+  25%  { opacity: 1; }
+  29%  { opacity: 1; }
+  32%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes aiRest {
+  0%   { opacity: 0; }
+  33%  { opacity: 0; }
+  36%  { opacity: 1; }
+  53%  { opacity: 1; }
+  57%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes aiDots {
+  0%   { max-width: 0; opacity: 1; }
+  36%  { max-width: 0; opacity: 1; }
+  50%  { max-width: 4em; opacity: 1; }
+  54%  { max-width: 4em; opacity: 1; }
+  57%  { max-width: 4em; opacity: 0; }
+  100% { max-width: 0; opacity: 0; }
+}
+
 /* ── VIDEOS ── */
 .videos-grid {
   display: grid;
