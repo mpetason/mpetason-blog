@@ -1128,7 +1128,6 @@ section:not(#hero) {
   background-size: 300% 100%;
 }
 [data-theme="light"] .ai-status-label span {
-  background: rgba(0, 0, 0, 0.12);
   color: #1a0040;
 }
 
@@ -1149,7 +1148,6 @@ section:not(#hero) {
   background-size: 300% 100%;
 }
 [data-theme="psychedelic"] .ai-status-label span {
-  background: rgba(0, 0, 0, 0.65);
   color: #00ffee;
 }
 
