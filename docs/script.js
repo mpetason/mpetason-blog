@@ -1,17 +1,22 @@
-// Theme toggle — cycles dark → light → psychedelic → dark
+// Theme pill switcher
 const root = document.documentElement;
-const themeBtn = document.getElementById('theme-toggle');
+const opts = document.querySelectorAll('.theme-opt');
+const indicator = document.querySelector('.theme-indicator');
 const MODES = ['dark', 'light', 'psychedelic'];
+
+function setTheme(mode) {
+  root.setAttribute('data-theme', mode);
+  localStorage.setItem('theme', mode);
+  opts.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
+  const idx = MODES.indexOf(mode);
+  indicator.style.transform = `translateX(${idx * 30}px)`;
+}
+
 const saved = localStorage.getItem('theme');
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-root.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+setTheme(saved || (prefersDark ? 'dark' : 'light'));
 
-themeBtn.addEventListener('click', () => {
-  const current = root.getAttribute('data-theme');
-  const next = MODES[(MODES.indexOf(current) + 1) % MODES.length];
-  root.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
-});
+opts.forEach(btn => btn.addEventListener('click', () => setTheme(btn.dataset.mode)));
 
 // Navbar scroll effect
 const navbar = document.getElementById('navbar');
