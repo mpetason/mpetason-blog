@@ -1,3 +1,18 @@
+// Theme toggle — cycles dark → light → psychedelic → dark
+const root = document.documentElement;
+const themeBtn = document.getElementById('theme-toggle');
+const MODES = ['dark', 'light', 'psychedelic'];
+const saved = localStorage.getItem('theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+root.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+
+themeBtn.addEventListener('click', () => {
+  const current = root.getAttribute('data-theme');
+  const next = MODES[(MODES.indexOf(current) + 1) % MODES.length];
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+});
+
 // Navbar scroll effect
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
